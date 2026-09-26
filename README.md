@@ -14,6 +14,8 @@ An exploratory amenity feature experiment calculates nearest distances and one-k
 
 A CatBoost comparison using address categories reaches **RMSE SGD 451.27** with block features and **450.46** with amenity features on the latest holdout. The amenity version improves on HGB in all four six-month windows. Its 50,000-row file, `catboost_amenities_candidate.csv`, is ready locally but **has not been submitted to Kaggle**. The six-month holdout also cannot establish performance through July 2026, the end of the unlabeled test period.
 
+CatBoost's overall MAE is **SGD 326.27**, but it is much less reliable for the 925 validation records with actual rent at or below SGD 2,000: their MAE is **SGD 1,037.35**, with average predictions **SGD 1,033.19 above** the actual rent. This band is defined using the observed target; it identifies cases to audit and does not explain why their rents are low. Executive flats also have higher MAE (**SGD 384.25**) than the overall figure.
+
 ## Reproduce the analysis
 
 Use Python 3.11 or newer from the repository root. On Windows PowerShell:
@@ -25,6 +27,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe src/rolling_validation.py
 .\.venv\Scripts\python.exe src/amenity_experiment.py
 .\.venv\Scripts\python.exe src/catboost_experiment.py
+.\.venv\Scripts\python.exe src/catboost_error_analysis.py
 .\.venv\Scripts\python.exe src/make_submission.py
 .\.venv\Scripts\python.exe src/make_catboost_submission.py
 ```
@@ -39,6 +42,7 @@ The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `d
 | `src/progress_analysis.py` | Data checks, feature preparation and preliminary validation |
 | `src/amenity_experiment.py` | Exploratory amenity distances and matched forward validation |
 | `src/catboost_experiment.py` | CatBoost comparison and four forward windows |
+| `src/catboost_error_analysis.py` | Error audit by rent band, flat type, town and approval month |
 | `analysis/` | Generated metrics and tables used in the progress report |
 | `submissions/` | Candidate Kaggle submission and its metadata |
 | `cs5228-report-templates.zip` | Course-provided final report templates |

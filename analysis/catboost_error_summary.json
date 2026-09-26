@@ -1,0 +1,17 @@
+{
+  "validation": "Train through 2024-09; validate on 2024-10 to 2025-03",
+  "validation_rows": 17198,
+  "overall": {
+    "mae_sgd": 326.27,
+    "rmse_sgd": 450.46,
+    "r2": 0.5049
+  },
+  "median_absolute_error_sgd": 246.3,
+  "p90_absolute_error_sgd": 688.88,
+  "highest_mae_flat_type_with_at_least_100_rows": {
+    "flat_type": "executive",
+    "rows": 852,
+    "mae_sgd": 384.25
+  },
+  "signed_error_definition": "prediction minus actual rent; positive values indicate overprediction"
+}
