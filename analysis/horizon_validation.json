@@ -1,0 +1,81 @@
+{
+  "description": "Fixed model settings with validation windows ending March 2025",
+  "windows": [
+    {
+      "horizon_months": 18,
+      "fit_through": "2023-09",
+      "validation_start": "2023-10",
+      "validation_end": "2025-03",
+      "fit_rows": 96865,
+      "validation_rows": 53135,
+      "scores": {
+        "hgb_block": {
+          "mae_sgd": 387.09,
+          "rmse_sgd": 508.58,
+          "r2": 0.4307
+        },
+        "catboost_block": {
+          "mae_sgd": 379.66,
+          "rmse_sgd": 501.21,
+          "r2": 0.4471
+        },
+        "catboost_block_amenities": {
+          "mae_sgd": 379.72,
+          "rmse_sgd": 500.37,
+          "r2": 0.4489
+        }
+      }
+    },
+    {
+      "horizon_months": 12,
+      "fit_through": "2024-03",
+      "validation_start": "2024-04",
+      "validation_end": "2025-03",
+      "fit_rows": 114842,
+      "validation_rows": 35158,
+      "scores": {
+        "hgb_block": {
+          "mae_sgd": 358.71,
+          "rmse_sgd": 481.63,
+          "r2": 0.4662
+        },
+        "catboost_block": {
+          "mae_sgd": 353.42,
+          "rmse_sgd": 475.58,
+          "r2": 0.4795
+        },
+        "catboost_block_amenities": {
+          "mae_sgd": 352.21,
+          "rmse_sgd": 474.12,
+          "r2": 0.4827
+        }
+      }
+    },
+    {
+      "horizon_months": 6,
+      "fit_through": "2024-09",
+      "validation_start": "2024-10",
+      "validation_end": "2025-03",
+      "fit_rows": 132802,
+      "validation_rows": 17198,
+      "scores": {
+        "hgb_block": {
+          "mae_sgd": 334.55,
+          "rmse_sgd": 457.68,
+          "r2": 0.4889
+        },
+        "catboost_block": {
+          "mae_sgd": 327.76,
+          "rmse_sgd": 451.27,
+          "r2": 0.5031
+        },
+        "catboost_block_amenities": {
+          "mae_sgd": 326.27,
+          "rmse_sgd": 450.46,
+          "r2": 0.5049
+        }
+      }
+    }
+  ],
+  "caveat": "The amenity tables lack complete historical opening dates; historical access may be overstated."
+}
