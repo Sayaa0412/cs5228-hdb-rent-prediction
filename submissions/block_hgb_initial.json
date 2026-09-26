@@ -1,5 +1,5 @@
 {
-  "status": "candidate_not_uploaded",
+  "status": "submitted_scored",
   "file": "submissions\\block_hgb_initial.csv",
   "rows": 50000,
   "columns": [
@@ -9,5 +9,9 @@
   "model": "HistGradientBoostingRegressor with core and HDB block features",
   "training_rows": 150000,
   "local_forward_validation_rmse_sgd": 457.68,
-  "caution": "The local validation covers six months; the Kaggle test extends to July 2026."
+  "kaggle_public_rmse_sgd": 454.42263,
+  "kaggle_score_date": "2026-09-26",
+  "kaggle_submission_status": "Complete",
+  "kaggle_results_url": "https://www.kaggle.com/competitions/cs-5228-2610-project/submissions",
+  "caution": "The local validation covers six months; the Kaggle test extends to July 2026. The public leaderboard uses approximately half of the test data and is separate from the final private leaderboard."
 }
