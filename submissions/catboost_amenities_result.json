@@ -1,0 +1,16 @@
+{
+  "status": "submitted_scored",
+  "file": "submissions\\catboost_amenities_candidate.csv",
+  "sha256": "2b0a5841d8fa205dd625a4ce0cfd0b401ca4ea79f4464a94b49bf63038174ea2",
+  "rows": 50000,
+  "columns": ["Id", "Predicted"],
+  "model": "CatBoostRegressor with core, block, address and static amenity features",
+  "local_forward_validation_rmse_sgd": 450.46,
+  "kaggle_public_rmse_sgd": 444.80298,
+  "block_only_public_rmse_sgd": 445.55651,
+  "public_rmse_improvement_sgd": 0.75353,
+  "kaggle_submission_status": "Complete",
+  "kaggle_submission_time": "2026-09-26T19:18:07+08:00",
+  "kaggle_results_url": "https://www.kaggle.com/competitions/cs-5228-2610-project/submissions",
+  "caution": "The public score uses a subset of the test data and is separate from local validation and the final private leaderboard. Amenity opening dates are incomplete."
+}
