@@ -1,0 +1,61 @@
+{
+  "method": "Time ordered holdout: train through 2024-09, validate on 2024-10 to 2025-03",
+  "random_seed": 42,
+  "train_rows": 150000,
+  "test_rows": 50000,
+  "build_rows": 132802,
+  "validation_rows": 17198,
+  "train_date_range": [
+    "2021-01",
+    "2025-03"
+  ],
+  "test_date_range": [
+    "2025-03",
+    "2026-07"
+  ],
+  "train_missing_cells": 0,
+  "test_missing_cells": 0,
+  "constant_train_columns": [
+    "FURNISHED",
+    "FEE"
+  ],
+  "exact_duplicate_train_rows": 425,
+  "exact_duplicate_test_rows": 5508,
+  "block_match_rate_train": 1.0,
+  "block_match_rate_test": 1.0,
+  "post_completion_approvals_train": 0,
+  "target": {
+    "mean_sgd": 2719.04,
+    "median_sgd": 2700.0,
+    "p01_sgd": 1300.0,
+    "p99_sgd": 4600.0
+  },
+  "validation_scores": {
+    "global_median": {
+      "mae_sgd": 683.06,
+      "rmse_sgd": 835.9,
+      "r2": -0.7048
+    },
+    "town_flat_type_median": {
+      "mae_sgd": 656.04,
+      "rmse_sgd": 752.82,
+      "r2": -0.3827
+    },
+    "core_hgb": {
+      "mae_sgd": 339.11,
+      "rmse_sgd": 462.41,
+      "r2": 0.4783
+    },
+    "core_plus_block_hgb": {
+      "mae_sgd": 334.55,
+      "rmse_sgd": 457.68,
+      "r2": 0.4889
+    }
+  },
+  "best_validation_model_by_rmse": "core_plus_block_hgb",
+  "notes": [
+    "Validation simulates forward prediction but spans six months; the Kaggle test extends beyond this horizon.",
+    "Identical feature rows need not be erroneous: separate rentals may share recorded attributes.",
+    "The competition evaluates submissions with RMSE; see its Evaluation section."
+  ]
+}
