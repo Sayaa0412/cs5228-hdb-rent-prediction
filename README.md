@@ -67,6 +67,6 @@ The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `d
 
 ## Collaboration
 
-Team members should join the official Kaggle team before sharing competition material. Before editing, run `git pull --rebase origin main`. Commit your changes, then run `git push origin main`. If two people need to edit the same files, use separate branches and a pull request.
+Before editing, run `git pull --rebase origin main`. Commit your changes, then run `git push origin main`. If two people need to edit the same files, use separate branches and a pull request.
 
 The next experiments will audit amenity opening dates where possible, review stock indicators using only earlier prices, and compare further regression methods. Each experiment should record its split, features, RMSE and code version.
