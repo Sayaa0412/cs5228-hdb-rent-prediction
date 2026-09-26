@@ -6,9 +6,9 @@ This project predicts monthly HDB rent in Singapore from flat details and approv
 
 ## Current status
 
-The [editable progress report](reports/progress/CS5228_Team29_Progress_Report_v2.pptx) contains 12 slides. It includes exploratory findings, a forward validation design, four preliminary models, error analysis and the next steps. The results are local validation scores, not Kaggle leaderboard scores. The original course data and report templates are in `data/` and `cs5228-report-templates.zip`.
+The [editable progress report](reports/progress/CS5228_Team29_Progress_Report_v3.pptx) contains 12 slides. It includes exploratory findings, a forward validation design, four preliminary models, error analysis and the next steps. The results are local validation scores, not Kaggle leaderboard scores. The original course data and report templates are in `data/` and `cs5228-report-templates.zip`.
 
-The best preliminary model is a histogram gradient boosting regressor with HDB block features. On the October 2024 to March 2025 holdout, it reaches **RMSE SGD 457.68** and **MAE SGD 334.55**. This six-month holdout does not establish performance through July 2026, the end of the unlabeled test period. Results may change as we improve validation and features.
+The best preliminary model is a histogram gradient boosting regressor with HDB block features. On the October 2024 to March 2025 holdout, it reaches **RMSE SGD 457.68** and **MAE SGD 334.55**. Four consecutive six-month checks produced RMSE values of **621.66, 548.01, 499.04 and 457.68**, so the recent score does not describe every market period. These checks also do not establish performance through July 2026, the end of the unlabeled test period.
 
 ## Reproduce the analysis
 
@@ -18,9 +18,11 @@ Use Python 3.11 or newer from the repository root:
 python -m venv .venv
 python -m pip install -r requirements.txt
 python src/progress_analysis.py
+python src/rolling_validation.py
+python src/make_submission.py
 ```
 
-The script reads `data/train.csv`, `data/test.csv` and `data/auxiliary/sg-hdb-block.csv`. It writes metrics and supporting tables to `analysis/`. It never reads hidden test labels. The model fitting set ends in September 2024; the following six months form the validation set. The script fixes its model seed at 42.
+The scripts read `data/train.csv`, `data/test.csv` and `data/auxiliary/sg-hdb-block.csv`. They write metrics and supporting tables to `analysis/` and a candidate Kaggle file to `submissions/`. They never read hidden test labels. The main progress-report model fitting set ends in September 2024; the following six months form its validation set. The model seed is 42. `make_submission.py` fits on all labeled rows and creates a candidate with `Id,Predicted`; running it does not upload the file.
 
 ## Repository contents
 
@@ -29,6 +31,7 @@ The script reads `data/train.csv`, `data/test.csv` and `data/auxiliary/sg-hdb-bl
 | `data/` | Course-provided competition data, kept in this private repository |
 | `src/progress_analysis.py` | Data checks, feature preparation and preliminary validation |
 | `analysis/` | Generated metrics and tables used in the progress report |
+| `submissions/` | Candidate Kaggle submission and its metadata |
 | `reports/progress/` | Editable PowerPoint progress report |
 | `cs5228-report-templates.zip` | Course-provided final report templates |
 | `CS5228_Project_Requirements.md` | Requirements summarized from Canvas |
