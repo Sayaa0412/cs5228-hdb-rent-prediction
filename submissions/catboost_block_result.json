@@ -1,0 +1,14 @@
+{
+  "status": "submitted_scored",
+  "file": "submissions\\catboost_block_candidate.csv",
+  "sha256": "294ebfc9965297a83b7807a376668c4296ef85d04d45eb14614b54bbb892d081",
+  "rows": 50000,
+  "columns": ["Id", "Predicted"],
+  "model": "CatBoostRegressor with core, HDB block and address features; no amenity tables",
+  "local_forward_validation_rmse_sgd": 451.27,
+  "kaggle_public_rmse_sgd": 445.55651,
+  "kaggle_submission_status": "Complete",
+  "kaggle_submission_time": "2026-09-26T17:48:55+08:00",
+  "kaggle_results_url": "https://www.kaggle.com/competitions/cs-5228-2610-project/submissions",
+  "caution": "This public score uses a subset of the test data and is separate from local forward validation and the final private leaderboard."
+}

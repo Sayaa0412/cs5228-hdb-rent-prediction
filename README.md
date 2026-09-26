@@ -13,13 +13,13 @@ This project predicts monthly HDB rent in Singapore from flat details and approv
 
 ## Current status
 
-The [12-slide progress report](reports/progress/CS5228_Team29_Progress_Report_v7.pptx) covers the data, forward validation, preliminary models, error analysis, the first Kaggle public score and next steps. The course data and report templates are in `data/` and `cs5228-report-templates.zip`.
+The [12-slide progress report](reports/progress/CS5228_Team29_Progress_Report_v8.pptx) covers the data, forward validation, preliminary models, error analysis, both Kaggle public scores and next steps. The course data and report templates are in `data/` and `cs5228-report-templates.zip`.
 
 The first histogram gradient boosting (HGB) model with HDB block features reaches **RMSE SGD 457.68** and **MAE SGD 334.55** on the October 2024 to March 2025 holdout. Its [Kaggle submission](https://www.kaggle.com/competitions/cs-5228-2610-project/submissions), `block_hgb_initial.csv`, was marked Complete on 26 September 2026 with a **public RMSE of SGD 454.42263**. Kaggle states that its public leaderboard uses approximately 50% of the test data; the final private leaderboard uses the other 50%. This is not the same evaluation as the local holdout. Four consecutive six-month HGB checks produced RMSE values of **621.66, 548.01, 499.04 and 457.68**, so the recent score does not describe every market period.
 
 An exploratory amenity feature experiment calculates nearest distances and one-kilometre counts for MRT stations marked open, primary schools and shopping malls. With the same model settings and latest forward holdout, RMSE moves from **457.68 to 454.95**. It improves all four rolling windows by **0.86 to 2.73 SGD**. These are local validation results; the expanded model has not been submitted to Kaggle. The auxiliary tables do not provide complete historical opening dates, so this feature set needs a temporal availability audit before being used as evidence of historical access to amenities.
 
-A CatBoost comparison using address categories reaches **RMSE SGD 451.27** with block features and **450.46** with amenity features on the latest holdout. The amenity version improves on HGB in all four six-month windows. Both 50,000-row candidates are in `submissions/`: `catboost_block_candidate.csv` uses no amenity tables, while `catboost_amenities_candidate.csv` has the slightly lower local error. **Neither CatBoost file has been submitted to Kaggle.** The six-month holdout also cannot establish performance through July 2026, the end of the unlabeled test period.
+A CatBoost comparison using address categories reaches **RMSE SGD 451.27** with block features and **450.46** with amenity features on the latest holdout. The amenity version improves on HGB in all four six-month windows. Both 50,000-row files are in `submissions/`: `catboost_block_candidate.csv` uses no amenity tables, while `catboost_amenities_candidate.csv` has the slightly lower local error. The block-only file was submitted on 26 September 2026 and received a **Kaggle public RMSE of SGD 445.55651**, down from **454.42263** for the initial HGB submission. The amenity file has not been submitted. Public leaderboard scores use a separate test subset and are not local holdout or final private leaderboard results. The six-month holdout also cannot establish performance through July 2026, the end of the unlabeled test period.
 
 With fixed settings and longer validation periods ending in March 2025, CatBoost with amenities has RMSE **474.12** over 12 months and **500.37** over 18 months. The corresponding HGB scores are **481.63** and **508.58**. These checks show why the latest six-month score should not stand in for a longer forecast.
 
@@ -46,7 +46,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe src/make_catboost_block_submission.py
 ```
 
-The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `data/auxiliary/`. They write metrics and supporting tables to `analysis/` and candidate Kaggle files to `submissions/`. They never read hidden test labels. The main model fitting set ends in September 2024; the following six months form its validation set. The model seed is 42. The three submission-building scripts fit on all labeled rows and create files with `Id,Predicted`; running them does not upload a file. Each generated candidate has a SHA-256 hash in its metadata. The scored HGB file's observed Kaggle result is recorded separately in `submissions/block_hgb_initial.json`.
+The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `data/auxiliary/`. They write metrics and supporting tables to `analysis/` and candidate Kaggle files to `submissions/`. They never read hidden test labels. The main model fitting set ends in September 2024; the following six months form its validation set. The model seed is 42. The three submission-building scripts fit on all labeled rows and create files with `Id,Predicted`; running them does not upload a file. Each generated candidate has a SHA-256 hash in its metadata. The observed Kaggle results are recorded separately in `submissions/block_hgb_initial.json` and `submissions/catboost_block_result.json`.
 
 ## Repository contents
 
@@ -61,7 +61,7 @@ The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `d
 | `src/catboost_error_analysis.py` | Error audit by rent band, flat type, town and approval month |
 | `src/make_catboost_block_submission.py` | Build the candidate without amenity tables |
 | `analysis/` | Generated metrics and tables used in the progress report |
-| `submissions/` | Kaggle candidate files, hashes and the first public result |
+| `submissions/` | Kaggle prediction files, hashes and public results |
 | `cs5228-report-templates.zip` | Course-provided final report templates |
 | `reports/progress/` | Editable progress-report slides |
 
