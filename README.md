@@ -23,6 +23,8 @@ A CatBoost comparison using address categories reaches **RMSE SGD 451.27** with 
 
 With fixed settings and longer validation periods ending in March 2025, CatBoost with amenities has RMSE **474.12** over 12 months and **500.37** over 18 months. The corresponding HGB scores are **481.63** and **508.58**. These checks show why the latest six-month score should not stand in for a longer forecast.
 
+A previous-month COE premium was tested as a date-aligned economic feature. It raised CatBoost block RMSE by **0.21**, **0.59** and **11.06** SGD on the six-, twelve- and eighteen-month windows. We left it out of the candidate model.
+
 CatBoost's overall MAE is **SGD 326.27**, but it is much less reliable for the 925 validation records with actual rent at or below SGD 2,000: their MAE is **SGD 1,037.35**, with average predictions **SGD 1,033.19 above** the actual rent. This band is defined using the observed target; it identifies cases to audit and does not explain why their rents are low. Executive flats also have higher MAE (**SGD 384.25**) than the overall figure.
 
 ## Reproduce the analysis
@@ -37,6 +39,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe src/amenity_experiment.py
 .\.venv\Scripts\python.exe src/catboost_experiment.py
 .\.venv\Scripts\python.exe src/horizon_validation.py
+.\.venv\Scripts\python.exe src/coe_experiment.py
 .\.venv\Scripts\python.exe src/catboost_error_analysis.py
 .\.venv\Scripts\python.exe src/make_submission.py
 .\.venv\Scripts\python.exe src/make_catboost_submission.py
@@ -53,6 +56,7 @@ The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `d
 | `src/amenity_experiment.py` | Exploratory amenity distances and matched forward validation |
 | `src/catboost_experiment.py` | CatBoost comparison and four forward windows |
 | `src/horizon_validation.py` | Six-, twelve- and eighteen-month forward holds |
+| `src/coe_experiment.py` | Previous-month COE feature comparison |
 | `src/catboost_error_analysis.py` | Error audit by rent band, flat type, town and approval month |
 | `analysis/` | Generated metrics and tables used in the progress report |
 | `submissions/` | Candidate Kaggle submission and its metadata |
@@ -63,4 +67,4 @@ The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `d
 
 Team members should join the official Kaggle team before sharing competition material. Before editing, run `git pull --rebase origin main`. Commit your changes, then run `git push origin main`. If two people need to edit the same files, use separate branches and a pull request.
 
-The next experiments will audit amenity opening dates where possible, test economic indicators using only values available by the approval month, and compare further regression methods. Each experiment should record its split, features, RMSE and code version.
+The next experiments will audit amenity opening dates where possible, review stock indicators using only earlier prices, and compare further regression methods. Each experiment should record its split, features, RMSE and code version.
