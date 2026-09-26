@@ -19,7 +19,7 @@ The first histogram gradient boosting (HGB) model with HDB block features reache
 
 An exploratory amenity feature experiment calculates nearest distances and one-kilometre counts for MRT stations marked open, primary schools and shopping malls. With the same model settings and latest forward holdout, RMSE moves from **457.68 to 454.95**. It improves all four rolling windows by **0.86 to 2.73 SGD**. These are local validation results; the expanded model has not been submitted to Kaggle. The auxiliary tables do not provide complete historical opening dates, so this feature set needs a temporal availability audit before being used as evidence of historical access to amenities.
 
-A CatBoost comparison using address categories reaches **RMSE SGD 451.27** with block features and **450.46** with amenity features on the latest holdout. The amenity version improves on HGB in all four six-month windows. Its 50,000-row file, `catboost_amenities_candidate.csv`, is ready locally but **has not been submitted to Kaggle**. The six-month holdout also cannot establish performance through July 2026, the end of the unlabeled test period.
+A CatBoost comparison using address categories reaches **RMSE SGD 451.27** with block features and **450.46** with amenity features on the latest holdout. The amenity version improves on HGB in all four six-month windows. Both 50,000-row candidates are in `submissions/`: `catboost_block_candidate.csv` uses no amenity tables, while `catboost_amenities_candidate.csv` has the slightly lower local error. **Neither CatBoost file has been submitted to Kaggle.** The six-month holdout also cannot establish performance through July 2026, the end of the unlabeled test period.
 
 With fixed settings and longer validation periods ending in March 2025, CatBoost with amenities has RMSE **474.12** over 12 months and **500.37** over 18 months. The corresponding HGB scores are **481.63** and **508.58**. These checks show why the latest six-month score should not stand in for a longer forecast.
 
@@ -43,9 +43,10 @@ python -m venv .venv
 .\.venv\Scripts\python.exe src/catboost_error_analysis.py
 .\.venv\Scripts\python.exe src/make_submission.py
 .\.venv\Scripts\python.exe src/make_catboost_submission.py
+.\.venv\Scripts\python.exe src/make_catboost_block_submission.py
 ```
 
-The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `data/auxiliary/`. They write metrics and supporting tables to `analysis/` and candidate Kaggle files to `submissions/`. They never read hidden test labels. The main model fitting set ends in September 2024; the following six months form its validation set. The model seed is 42. The two `make_*submission.py` scripts fit on all labeled rows and create files with `Id,Predicted`; running them does not upload either file. Each generated candidate has a SHA-256 hash in its metadata. The scored HGB file's observed Kaggle result is recorded separately in `submissions/block_hgb_initial.json`.
+The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `data/auxiliary/`. They write metrics and supporting tables to `analysis/` and candidate Kaggle files to `submissions/`. They never read hidden test labels. The main model fitting set ends in September 2024; the following six months form its validation set. The model seed is 42. The three submission-building scripts fit on all labeled rows and create files with `Id,Predicted`; running them does not upload a file. Each generated candidate has a SHA-256 hash in its metadata. The scored HGB file's observed Kaggle result is recorded separately in `submissions/block_hgb_initial.json`.
 
 ## Repository contents
 
@@ -58,8 +59,9 @@ The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `d
 | `src/horizon_validation.py` | Six-, twelve- and eighteen-month forward holds |
 | `src/coe_experiment.py` | Previous-month COE feature comparison |
 | `src/catboost_error_analysis.py` | Error audit by rent band, flat type, town and approval month |
+| `src/make_catboost_block_submission.py` | Build the candidate without amenity tables |
 | `analysis/` | Generated metrics and tables used in the progress report |
-| `submissions/` | Candidate Kaggle submission and its metadata |
+| `submissions/` | Kaggle candidate files, hashes and the first public result |
 | `cs5228-report-templates.zip` | Course-provided final report templates |
 | `reports/progress/` | Editable progress-report slides |
 
