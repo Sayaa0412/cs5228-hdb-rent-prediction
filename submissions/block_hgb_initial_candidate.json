@@ -1,0 +1,14 @@
+{
+  "status": "candidate_generated",
+  "file": "submissions\\block_hgb_initial.csv",
+  "sha256": "c6015fe5c1063ae068a7a2da6599d6124ddfe66bdc943d0b9944462826818780",
+  "rows": 50000,
+  "columns": [
+    "Id",
+    "Predicted"
+  ],
+  "model": "HistGradientBoostingRegressor with core and HDB block features",
+  "training_rows": 150000,
+  "local_forward_validation_rmse_sgd": 457.68,
+  "caution": "The local validation covers six months; the Kaggle test extends to July 2026."
+}

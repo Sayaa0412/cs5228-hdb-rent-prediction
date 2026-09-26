@@ -7,6 +7,7 @@ This generates a candidate; it does not upload it to Kaggle.
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 
 import numpy as np
@@ -37,9 +38,11 @@ def main() -> None:
         raise ValueError("Submission Id values must be unique and nonmissing")
     csv_path = OUTPUT / "block_hgb_initial.csv"
     submission.to_csv(csv_path, index=False)
+    digest = hashlib.sha256(csv_path.read_bytes()).hexdigest()
     metadata = {
-        "status": "candidate_not_uploaded",
+        "status": "candidate_generated",
         "file": str(csv_path.relative_to(ROOT)),
+        "sha256": digest,
         "rows": len(submission),
         "columns": list(submission.columns),
         "model": "HistGradientBoostingRegressor with core and HDB block features",
@@ -47,7 +50,9 @@ def main() -> None:
         "local_forward_validation_rmse_sgd": 457.68,
         "caution": "The local validation covers six months; the Kaggle test extends to July 2026.",
     }
-    (OUTPUT / "block_hgb_initial.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+    (OUTPUT / "block_hgb_initial_candidate.json").write_text(
+        json.dumps(metadata, indent=2), encoding="utf-8"
+    )
     print(json.dumps(metadata, indent=2))
 
 
