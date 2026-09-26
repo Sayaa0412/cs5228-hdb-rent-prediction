@@ -10,6 +10,8 @@ The 12-slide progress report draft is under team review and is not included in t
 
 The best preliminary model is a histogram gradient boosting regressor with HDB block features. On the October 2024 to March 2025 holdout, it reaches **RMSE SGD 457.68** and **MAE SGD 334.55**. The first [Kaggle submission](https://www.kaggle.com/competitions/cs-5228-2610-project/submissions), `block_hgb_initial.csv`, was marked Complete on 26 September 2026 with a **public RMSE of SGD 454.42263**. Kaggle states that its public leaderboard uses approximately 50% of the test data; the final private leaderboard uses the other 50%. This is not the same evaluation as the local holdout. Four consecutive six-month checks produced RMSE values of **621.66, 548.01, 499.04 and 457.68**, so the recent score does not describe every market period. These checks also do not establish performance through July 2026, the end of the unlabeled test period.
 
+An exploratory amenity feature experiment calculates nearest distances and one-kilometre counts for MRT stations marked open, primary schools and shopping malls. With the same model settings and latest forward holdout, RMSE moves from **457.68 to 454.95**. It improves all four rolling windows by **0.86 to 2.73 SGD**. These are local validation results; the expanded model has not been submitted to Kaggle. The auxiliary tables do not provide complete historical opening dates, so this feature set needs a temporal availability audit before being used as evidence of historical access to amenities.
+
 ## Reproduce the analysis
 
 Use Python 3.11 or newer from the repository root:
@@ -19,6 +21,7 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python src/progress_analysis.py
 python src/rolling_validation.py
+python src/amenity_experiment.py
 python src/make_submission.py
 ```
 
@@ -30,6 +33,7 @@ The scripts read `data/train.csv`, `data/test.csv` and `data/auxiliary/sg-hdb-bl
 | --- | --- |
 | `data/` | Course-provided competition data, kept in this private repository |
 | `src/progress_analysis.py` | Data checks, feature preparation and preliminary validation |
+| `src/amenity_experiment.py` | Exploratory amenity distances and matched forward validation |
 | `analysis/` | Generated metrics and tables used in the progress report |
 | `submissions/` | Candidate Kaggle submission and its metadata |
 | `cs5228-report-templates.zip` | Course-provided final report templates |
@@ -39,4 +43,4 @@ The scripts read `data/train.csv`, `data/test.csv` and `data/auxiliary/sg-hdb-bl
 
 The repository is private because the competition data and project code are for Team 29. Team members should also join the official Kaggle team before sharing competition material. To avoid overwriting another member's work, start each session with `git pull --rebase origin main`, make a focused commit, then run `git push origin main`. If Git reports a conflict, resolve it before pushing. For larger or overlapping changes, use a separate branch and a pull request.
 
-The next experiments will test additional forward validation windows, distance to amenities, date-safe economic indicators and further regression methods. Each experiment should record the split, features, RMSE and code version so that the final report can trace its results.
+The next experiments will audit amenity opening dates where available, test date-safe economic indicators and compare further regression methods. Each experiment should record the split, features, RMSE and code version so that the final report can trace its results.
