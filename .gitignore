@@ -1,5 +1,7 @@
 .build-progress/
 .chart-data-*/
+reports/progress/*.pptx
+reports/progress/*.pdf
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/

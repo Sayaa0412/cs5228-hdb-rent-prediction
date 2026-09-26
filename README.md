@@ -6,7 +6,7 @@ This project predicts monthly HDB rent in Singapore from flat details and approv
 
 ## Current status
 
-The progress report is available as an [editable PowerPoint](reports/progress/CS5228_Team29_Progress_Report_v5.pptx) and a [12-page PDF for Canvas submission](reports/progress/CS5228_Team29_Progress_Report_v5.pdf). It uses a purple, pink and blue palette. It includes exploratory findings, a forward validation design, four preliminary models, error analysis, the first Kaggle public score and the next steps. The original course data and report templates are in `data/` and `cs5228-report-templates.zip`.
+The 12-slide progress report draft is under team review and is not included in this repository yet. It uses a purple, pink and blue palette. It includes exploratory findings, a forward validation design, four preliminary models, error analysis, the first Kaggle public score and the next steps. The original course data and report templates are in `data/` and `cs5228-report-templates.zip`.
 
 The best preliminary model is a histogram gradient boosting regressor with HDB block features. On the October 2024 to March 2025 holdout, it reaches **RMSE SGD 457.68** and **MAE SGD 334.55**. The first [Kaggle submission](https://www.kaggle.com/competitions/cs-5228-2610-project/submissions), `block_hgb_initial.csv`, was marked Complete on 26 September 2026 with a **public RMSE of SGD 454.42263**. Kaggle states that its public leaderboard uses approximately 50% of the test data; the final private leaderboard uses the other 50%. This is not the same evaluation as the local holdout. Four consecutive six-month checks produced RMSE values of **621.66, 548.01, 499.04 and 457.68**, so the recent score does not describe every market period. These checks also do not establish performance through July 2026, the end of the unlabeled test period.
 
@@ -32,7 +32,6 @@ The scripts read `data/train.csv`, `data/test.csv` and `data/auxiliary/sg-hdb-bl
 | `src/progress_analysis.py` | Data checks, feature preparation and preliminary validation |
 | `analysis/` | Generated metrics and tables used in the progress report |
 | `submissions/` | Candidate Kaggle submission and its metadata |
-| `reports/progress/` | Editable PowerPoint and Canvas-ready PDF progress report |
 | `cs5228-report-templates.zip` | Course-provided final report templates |
 | `CS5228_Project_Requirements.md` | Requirements summarized from Canvas |
 
