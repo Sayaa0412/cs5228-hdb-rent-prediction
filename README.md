@@ -27,46 +27,203 @@ A previous-month COE premium was tested as a date-aligned economic feature. It r
 
 CatBoost's overall MAE is **SGD 326.27**, but it is much less reliable for the 925 validation records with actual rent at or below SGD 2,000: their MAE is **SGD 1,037.35**, with average predictions **SGD 1,033.19 above** the actual rent. This band is defined using the observed target; it identifies cases to audit and does not explain why their rents are low. Executive flats also have higher MAE (**SGD 384.25**) than the overall figure.
 
-## Reproduce the analysis
+## Environment setup
 
-Use Python 3.11 or newer from the repository root. On Windows PowerShell:
+Run all commands from the repository root. Python 3.11 or newer is recommended. The project can use either Conda or a standard Python virtual environment; do not install the dependencies into the system Python environment.
+
+### Conda
+
+The Conda commands are the same on Windows, Linux and macOS:
 
 ```bash
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe src/progress_analysis.py
-.\.venv\Scripts\python.exe src/rolling_validation.py
-.\.venv\Scripts\python.exe src/amenity_experiment.py
-.\.venv\Scripts\python.exe src/catboost_experiment.py
-.\.venv\Scripts\python.exe src/horizon_validation.py
-.\.venv\Scripts\python.exe src/coe_experiment.py
-.\.venv\Scripts\python.exe src/catboost_error_analysis.py
-.\.venv\Scripts\python.exe src/make_submission.py
-.\.venv\Scripts\python.exe src/make_catboost_submission.py
-.\.venv\Scripts\python.exe src/make_catboost_block_submission.py
+conda create --name cs5228_project python=3.11 pip -y
+conda activate cs5228_project
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-The scripts read `data/train.csv`, `data/test.csv` and the relevant tables in `data/auxiliary/`. They write metrics and supporting tables to `analysis/` and candidate Kaggle files to `submissions/`. They never read hidden test labels. The main model fitting set ends in September 2024; the following six months form its validation set. The model seed is 42. The three submission-building scripts fit on all labeled rows and create files with `Id,Predicted`; running them does not upload a file. Each generated candidate has a SHA-256 hash in its metadata. The observed Kaggle results are recorded separately in `submissions/block_hgb_initial.json`, `submissions/catboost_block_result.json` and `submissions/catboost_amenities_result.json`.
+### Python venv on Windows
 
-## Repository contents
+Create and activate the environment in PowerShell:
 
-| Path | Purpose |
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+If PowerShell blocks the activation script, the environment interpreter can be used directly:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+### Python venv on Linux or macOS
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+## Running experiments
+
+Before running the entry points, place the course data under `data/`:
+
+```text
+data/
+├── train.csv
+├── test.csv
+├── example-submission.csv
+└── auxiliary/
+    ├── sg-coe-prices.csv
+    ├── sg-hdb-block.csv
+    ├── sg-mrt-stations.csv
+    ├── sg-schools.csv
+    ├── sg-shopping-malls.csv
+    └── sg-stock-prices.csv
+```
+
+Each Bash script runs all eight registered model variants. `eval.bash` and `analysis.bash` retrain temporary models on time-based holdouts, so the CatBoost runs take longer than training or submission generation.
+
+| Task | Bash script | Input | Output |
+| --- | --- | --- | --- |
+| Train full-data models | `bash/train.bash` | `data/train.csv` | `chkpt/<model>/<variant>.joblib` |
+| Run holdout, rolling and horizon validation | `bash/eval.bash` | `data/train.csv` | `output/eval/<model>/<variant>.json` |
+| Run holdout error analysis | `bash/analysis.bash` | `data/train.csv` | `output/analysis/<model>/<variant>.json` |
+| Generate Kaggle candidates | `bash/submit.bash` | Checkpoints and `data/test.csv` | `output/submit/<model>/<variant>.csv` |
+
+`submit.bash` only generates local CSV files. It does not upload them to Kaggle. Run `train.bash` before `submit.bash` so every configured checkpoint exists. Evaluation and analysis do not use the full-data checkpoints and may be run independently.
+
+### Windows
+
+Activate the Conda or venv environment in PowerShell, then run the scripts with Git Bash:
+
+```powershell
+conda activate cs5228_project
+
+bash bash/train.bash
+bash bash/eval.bash
+bash bash/analysis.bash
+bash bash/submit.bash
+```
+
+On Windows, `bash` should resolve to Git Bash so it can use the active Windows Python environment. If Git Bash is not on `PATH`, invoke its executable directly; the installation path may differ between machines:
+
+```powershell
+& "C:\Program Files\Git\bin\bash.exe" bash/train.bash
+```
+
+For a venv, replace the Conda activation command with:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### Linux or macOS
+
+Activate the selected environment, then execute the same task scripts:
+
+```bash
+conda activate cs5228_project
+
+bash bash/train.bash
+bash bash/eval.bash
+bash bash/analysis.bash
+bash bash/submit.bash
+```
+
+For a venv, replace the Conda activation command with:
+
+```bash
+source .venv/bin/activate
+```
+
+### Running one model variant
+
+The root entry points accept one configuration file path. The configuration supplies the registered model name, variant, feature columns, hyperparameters and output paths, so the same file identifies the complete experiment:
+
+```bash
+python train.py --config_path configs/hgb/block.py
+python eval.py --config_path configs/hgb/block.py
+python analysis.py --config_path configs/hgb/block.py
+python submit.py --config_path configs/hgb/block.py
+```
+
+The available combinations are:
+
+| Model | Variants |
 | --- | --- |
-| `data/` | Course-provided competition data, kept in this private repository |
-| `src/progress_analysis.py` | Data checks, feature preparation and preliminary validation |
-| `src/amenity_experiment.py` | Exploratory amenity distances and matched forward validation |
-| `src/catboost_experiment.py` | CatBoost comparison and four forward windows |
-| `src/horizon_validation.py` | Six-, twelve- and eighteen-month forward holds |
-| `src/coe_experiment.py` | Previous-month COE feature comparison |
-| `src/catboost_error_analysis.py` | Error audit by rent band, flat type, town and approval month |
-| `src/make_catboost_block_submission.py` | Build the candidate without amenity tables |
-| `analysis/` | Generated metrics and tables used in the progress report |
-| `submissions/` | Kaggle prediction files, hashes and public results |
-| `cs5228-report-templates.zip` | Course-provided final report templates |
-| `reports/progress/` | Editable progress-report slides |
+| `median` | `global_median`, `town_flat_type` |
+| `hgb` | `core`, `block`, `amenities` |
+| `catboost` | `block`, `amenities`, `lagged_coe` |
+
+## Repository structure
+
+```text
+.
+├── analysis.py              # Holdout error analysis entry point
+├── eval.py                  # Holdout, rolling and horizon validation
+├── submit.py                # Kaggle CSV generation from checkpoints
+├── train.py                 # Full labeled-data training
+├── bash/                    # Batch entry points for all variants
+├── configs/                 # Model, training and output-path configuration
+│   ├── median/
+│   ├── hgb/
+│   └── catboost/
+├── src/                     # Importable project library
+│   ├── models/              # Abstract interface, registry and model classes
+│   └── preprocessing/       # Cleaning, feature joins and time splitting
+├── data/                    # Local course data; ignored by Git
+├── chkpt/                   # Generated model checkpoints; ignored by Git
+├── output/                  # Evaluation, analysis and submission files; ignored by Git
+├── requirements.txt         # Python dependencies
+└── TECHNICAL_GUIDE.md       # Detailed src component and extension guide
+```
+
+The shared `preprocess()` function converts raw train or test records into the same clean feature table. Each model class then selects and formats the columns required by its variant through its own `_preprocess()` implementation. New model modules register themselves through `src.models`, so the root entry points do not import concrete model classes individually.
+
+Each file in `configs/<model>/<variant>.py` defines:
+
+```text
+model_name
+auxiliary_config
+model_config
+training_config
+save_path
+submit_path
+eval_path
+analysis_path
+```
+
+`auxiliary_config` is currently reserved and must remain `None`. The root entry points pass it to `preprocess()`; non-`None` auxiliary configurations will be implemented in a later extension.
+
+See `TECHNICAL_GUIDE.md` for the preprocessing contract, model interface, registry usage and shape requirements.
 
 ## Collaboration
 
-Before editing, run `git pull --rebase origin main`. Commit your changes, then run `git push origin main`. If two people need to edit the same files, use separate branches and a pull request.
+Synchronize the branch before editing:
 
-The next experiments will audit amenity opening dates where possible, review stock indicators using only earlier prices, and compare further regression methods. Each experiment should record its split, features, RMSE and code version.
+```bash
+git pull --rebase origin main
+```
+
+Use a separate branch when multiple contributors are changing related files:
+
+```bash
+git switch -c feature/<short-description>
+```
+
+Keep changes scoped and commit the implementation together with its configuration and documentation updates. A new model or variant should include its model implementation, configuration file and entries in the relevant Bash scripts.
+
+Before opening a pull request:
+
+1. Run the affected model variant through the relevant root entry point.
+2. Confirm generated paths match the corresponding config file.
+3. Compare evaluation metrics with the previous implementation when migrating existing behavior.
+4. Check `git status` and exclude local data, checkpoints, outputs, environments and IDE settings.
+5. Rebase on the latest `main`, resolve conflicts locally and push the feature branch.
+
+The repository ignores `data/`, `chkpt/`, `output/`, virtual environments and editor-local settings. Do not force-add these generated or machine-specific files. Use a pull request when changes overlap with another contributor's work or affect shared model and preprocessing interfaces.

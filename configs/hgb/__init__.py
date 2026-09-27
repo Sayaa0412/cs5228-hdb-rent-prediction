@@ -1,0 +1,1 @@
+"""Histogram gradient boosting configurations."""
