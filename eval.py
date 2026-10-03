@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
+from src.config import save_config
 from src.models import create_model
 from src.preprocessing import forward_split, preprocess
 
@@ -42,6 +43,7 @@ def evaluate_split(
     train_end: str,
     valid_start: str,
     valid_end: str,
+    loss_path: Path,
 ) -> dict:
     train_raw, valid_raw = forward_split(
         raw,
@@ -68,7 +70,7 @@ def evaluate_split(
     model.train(X_train, y_train)
     prediction = model.predict(X_valid)
 
-    return {
+    result = {
         "fit_through": train_end,
         "validation_start": valid_start,
         "validation_end": valid_end,
@@ -81,6 +83,10 @@ def evaluate_split(
         ),
         "r2": round(float(r2_score(y_valid, prediction)), 4),
     }
+    loss_files = model.save_loss(loss_path)
+    if loss_files:
+        result["loss_files"] = loss_files
+    return result
 
 
 def main() -> None:
@@ -91,6 +97,10 @@ def main() -> None:
     config = runpy.run_path(ROOT / args.config_path)
     model_name = config["model_name"]
     raw = pd.read_csv(DATA / "train.csv")
+    output_path = ROOT / config["eval_path"]
+    save_config(config, output_path)
+    loss_dir = (output_path.parent / "loss" if model_name == "mlp"
+                else output_path.with_name(f"{output_path.stem}_loss"))
 
     holdout = evaluate_split(
         raw,
@@ -101,6 +111,7 @@ def main() -> None:
         train_end=HOLDOUT[0],
         valid_start=HOLDOUT[1],
         valid_end=HOLDOUT[2],
+        loss_path=loss_dir / "holdout",
     )
     print(json.dumps(holdout), flush=True)
 
@@ -115,6 +126,7 @@ def main() -> None:
             train_end=train_end,
             valid_start=valid_start,
             valid_end=valid_end,
+            loss_path=loss_dir / f"rolling_{valid_start}_{valid_end}",
         )
         rolling.append(record)
         print(json.dumps(record), flush=True)
@@ -130,6 +142,7 @@ def main() -> None:
             train_end=train_end,
             valid_start=valid_start,
             valid_end=valid_end,
+            loss_path=loss_dir / f"horizon_{months}m",
         )
         record = {"horizon_months": months, **record}
         horizon.append(record)
@@ -140,7 +153,6 @@ def main() -> None:
         "rolling": rolling,
         "horizon": horizon,
     }
-    output_path = ROOT / config["eval_path"]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(f"saved: {output_path}")

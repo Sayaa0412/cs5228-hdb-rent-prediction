@@ -9,6 +9,7 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
+from src.config import save_config
 from src.preprocessing import preprocess
 
 
@@ -19,13 +20,23 @@ DATA = ROOT / "data"
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config_path", required=True)
+    parser.add_argument("--checkpoint_path", help="Trained checkpoint path, relative to the repository or absolute")
     args = parser.parse_args()
 
     config = runpy.run_path(ROOT / args.config_path)
     model_name = config["model_name"]
     variant = config["model_config"]["variant"]
 
-    model = joblib.load(ROOT / config["save_path"])
+    checkpoint_path = ROOT / (args.checkpoint_path or config["save_path"])
+    model = joblib.load(checkpoint_path)
+    submit_path = ROOT / config["submit_path"]
+    # Record the loaded model's settings, which may differ from today's config.
+    save_config({
+        **config,
+        "model_config": model.model_config,
+        "training_config": model.training_config,
+        "save_path": str(checkpoint_path),
+    }, submit_path)
 
     X_raw = pd.read_csv(DATA / "test.csv")
     X_test = preprocess(
@@ -43,7 +54,6 @@ def main() -> None:
         }
     )
 
-    submit_path = ROOT / config["submit_path"]
     submit_path.parent.mkdir(parents=True, exist_ok=True)
     submission.to_csv(submit_path, index=False)
 

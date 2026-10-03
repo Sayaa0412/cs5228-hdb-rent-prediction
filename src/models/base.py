@@ -27,6 +27,7 @@ class BaseRegressionModel(ABC):
         self.model_config = dict(model_config)
         self.training_config = dict(training_config)
         self.model: Any | None = None
+        self.loss_history: list[float] = []
 
     @abstractmethod
     def _model_init(self) -> None:
@@ -57,3 +58,28 @@ class BaseRegressionModel(ABC):
         destination = Path(path)
         destination.parent.mkdir(parents=True, exist_ok=True)
         joblib.dump(self, destination)
+
+    def save_loss(self, path: str | Path) -> dict[str, str]:
+        """Export recorded epoch losses; models without a history produce no files."""
+        if not self.loss_history:
+            return {}
+        from matplotlib.figure import Figure
+
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        csv_path, png_path = path.with_suffix(".csv"), path.with_suffix(".png")
+        history = pd.DataFrame({
+            "epoch": range(1, len(self.loss_history) + 1),
+            "train_mse_standardized": self.loss_history,
+        })
+        history.to_csv(csv_path, index=False)
+        figure = Figure(figsize=(8, 4), layout="constrained")
+        axis = figure.subplots()
+        axis.plot(history["epoch"], history["train_mse_standardized"])
+        axis.set(
+            xlabel="Epoch", ylabel="Training MSE (standardized target)",
+            title=f"Training loss: {path.name}",
+        )
+        axis.grid(alpha=0.25)
+        figure.savefig(png_path, dpi=150)
+        return {"csv": str(csv_path), "png": str(png_path)}

@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
+from src.config import save_config
 from src.models import create_model
 from src.preprocessing import forward_split, preprocess
 
@@ -47,6 +48,8 @@ def main() -> None:
 
     config = runpy.run_path(ROOT / args.config_path)
     model_name = config["model_name"]
+    output_path = ROOT / config["analysis_path"]
+    save_config(config, output_path)
 
     raw = pd.read_csv(DATA / "train.csv")
     train_raw, valid_raw = forward_split(
@@ -132,7 +135,11 @@ def main() -> None:
         "error_by_rent_band": grouped_error(errors, "RENT_BAND"),
     }
 
-    output_path = ROOT / config["analysis_path"]
+    loss_path = (output_path.parent / "loss" / "holdout" if model_name == "mlp"
+                 else output_path.with_name(f"{output_path.stem}_loss"))
+    loss_files = model.save_loss(loss_path)
+    if loss_files:
+        result["loss_files"] = loss_files
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(json.dumps(result["summary"], indent=2))

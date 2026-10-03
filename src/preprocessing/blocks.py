@@ -19,6 +19,9 @@ def prepare_block_lookup(blocks: pd.DataFrame) -> pd.DataFrame:
         lookup[name] = normalize_text(lookup[name])
     if lookup.duplicated(BLOCK_KEYS).any():
         raise ValueError("HDB block lookup is not unique on town, block, street")
+    # The auxiliary table uses -1 for unknown values, not a year or floor count.
+    for name in ("YEAR_COMPLETED", "MAX_FLOOR"):
+        lookup[name] = lookup[name].mask(lookup[name].eq(-1))
     return lookup[[*BLOCK_KEYS, *BLOCK_FEATURES]]
 
 

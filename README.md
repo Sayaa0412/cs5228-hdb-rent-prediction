@@ -159,6 +159,55 @@ The available combinations are:
 | `median` | `global_median`, `town_flat_type` |
 | `hgb` | `core`, `block`, `amenities` |
 | `catboost` | `block`, `amenities`, `lagged_coe` |
+| `mlp` | `block` |
+
+### MLP baseline
+
+MLP is not included in the existing batch scripts; run it separately with the commands below.
+
+The PyTorch MLP uses the same seven numeric and six categorical features as CatBoost block, including the same joined `ADDRESS`. Category embeddings are concatenated with mean-imputed, standardized numeric features, followed by configurable ReLU layers, dropout and a scalar head. Numeric statistics, category dictionaries and target normalization are fitted only on training rows; missing/unseen categories use a fixed zero embedding. Predictions are converted back to SGD.
+
+Network dimensions, maximum selection epochs and AdamW settings are configured in `configs/mlp/block.py`; `device` accepts `cpu`, `auto` or an explicit PyTorch device. Each `train(X, y)` reserves the latest `validation_months=3` calendar months within its training input for inner validation, fitting all normalization and category maps only on earlier rows. Insufficient history raises an error; there is no random-split fallback. Validation runs at epoch 1, every `eval_every=10` epochs, and the final epoch. The minimum inner-validation RMSE selects the epoch (earliest on ties), with no early stopping.
+
+The final model is initialized afresh, fits normalization/maps on the full supplied training prefix, and trains for exactly the selected epoch count. `predict()` and the main joblib checkpoint use this full-prefix refit, not the inner-selection model. External evaluation windows and the public train/predict interface are unchanged; external labels are not used for epoch selection. Training costs `epochs + best_epoch` epochs per fit; the eight external evaluation fits each now have selection and refit phases. Checkpoints store CPU tensors. These changes do not make previously inspected development windows independently untouched test sets.
+
+MLP outputs are grouped in `block_YYMMDD_HHMM/` run directories, using local time when the configuration loads. Separate commands get separate timestamps; runs started in the same minute can overwrite the same output. For submission, explicitly provide the checkpoint printed by the training command (the path below is an example):
+
+Each MLP run also saves `config.yaml` beside its result or
+checkpoint, including feature lists, hyperparameters and resolved output paths.
+Submission snapshots use the loaded checkpoint's model/training settings and
+actual checkpoint path. Snapshots are saved before training or prediction, so a
+YAML file alone does not indicate successful completion. Existing runs are not
+backfilled because their exact configurations may no longer be available.
+
+```bash
+python train.py --config_path configs/mlp/block.py
+python eval.py --config_path configs/mlp/block.py
+python analysis.py --config_path configs/mlp/block.py
+python submit.py --config_path configs/mlp/block.py --checkpoint_path chkpt/mlp/block_261003_1545/model.joblib
+```
+
+With `verbose=True`, MLP training displays selection/refit tqdm progress bars rather
+than printing each epoch's loss. Loss history is recorded even with `verbose=False`.
+Each fit exports a full-prefix refit CSV (`epoch,train_mse_standardized`) and PNG curve:
+
+- `train.py`: `chkpt/mlp/block_<time>/` contains `model.joblib`, `config.yaml`
+  and `loss/train.csv` / `loss/train.png`.
+- `eval.py`: `output/eval/mlp/block_<time>/` contains `result.json`, `config.yaml`
+  and `loss/` with separate `holdout`, `rolling_<start>_<end>` and
+  `horizon_<months>m` CSV/PNG pairs.
+- `analysis.py`: `output/analysis/mlp/block_<time>/` contains `result.json`,
+  `config.yaml` and `loss/holdout.csv` / `loss/holdout.png`.
+- `submit.py`: `output/submit/mlp/block_<time>/` contains `submission.csv`
+  and `config.yaml`; prediction does not generate a training-loss curve.
+
+Each loss stem also produces `_selection.csv` (every epoch's batch MSE plus train/validation SGD RMSE at monitoring epochs), `_validation.png` (both SGD RMSE curves with the best epoch marked), `_summary.json` (inner date ranges/row counts, chosen epoch/RMSE and actual selection/refit epochs), and `_best_selection.joblib`. The latter is a standalone inner-fit model with the exact best weights, normalization, category maps and configuration, distinct from the final full-prefix model. The main checkpoint also retains selected-epoch metadata. The configuration YAML records requested settings; the summary records actual epoch counts.
+
+Evaluation and analysis JSON include all artifact paths in `loss_files`. Batch-MSE curves show the
+sample-weighted average of training-batch MSE on standardized targets, with dropout
+active and weights changing during each epoch. They are not validation loss or
+the final model's SGD RMSE. The separate validation plot uses deterministic, dropout-disabled inference on both inner subsets in the same SGD units to reveal overfitting; it is not an external-evaluation curve. Existing results cannot recover past epoch losses;
+new training is needed. Models without recorded histories produce no loss files.
 
 ## Repository structure
 
@@ -172,7 +221,8 @@ The available combinations are:
 ├── configs/                 # Model, training and output-path configuration
 │   ├── median/
 │   ├── hgb/
-│   └── catboost/
+│   ├── catboost/
+│   └── mlp/
 ├── src/                     # Importable project library
 │   ├── models/              # Abstract interface, registry and model classes
 │   └── preprocessing/       # Cleaning, feature joins and time splitting
