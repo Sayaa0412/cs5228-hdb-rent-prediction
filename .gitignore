@@ -2,10 +2,17 @@
 /data/
 /chkpt/
 /output/
+/analysis/
+/submissions/
+/reports/
+/.local-backup/
+/cs5228-report-templates.zip
+*.pptx
+*.ppt
+*.joblib
+*.cbm
 .build-progress/
 .chart-data-*/
-reports/progress/*.pptx
-reports/progress/*.pdf
 
 # Python bytecode and caches
 __pycache__/

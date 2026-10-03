@@ -1,7 +1,7 @@
 """Core-feature HGB configuration."""
 
 model_name = "hgb"
-auxiliary_config = None
+auxiliary_config = {}
 
 model_config = {
     "variant": "core",

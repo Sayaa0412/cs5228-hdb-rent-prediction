@@ -1,7 +1,7 @@
 """HDB block-feature HGB configuration."""
 
 model_name = "hgb"
-auxiliary_config = None
+auxiliary_config = {"blocks": True}
 
 model_config = {
     "variant": "block",

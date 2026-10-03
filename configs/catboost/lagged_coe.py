@@ -1,7 +1,7 @@
 """HDB block and lagged-COE CatBoost configuration."""
 
 model_name = "catboost"
-auxiliary_config = None
+auxiliary_config = {"blocks": True, "coe": True}
 
 model_config = {
     "variant": "lagged_coe",

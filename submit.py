@@ -9,11 +9,22 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
+from src.evaluation import validate_predictions
 from src.preprocessing import preprocess
 
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
+
+
+def build_submission(sample: pd.DataFrame, prediction, *, test_rows: int) -> pd.DataFrame:
+    """Validate the sample IDs and predictions before constructing a CSV."""
+    if list(sample.columns) != ["Id", "Predicted"] or len(sample) != test_rows:
+        raise ValueError("Sample submission does not match the test set")
+    if sample["Id"].isna().any() or sample["Id"].duplicated().any():
+        raise ValueError("Submission IDs must be unique and nonmissing")
+    values = validate_predictions(prediction, test_rows, positive=True)
+    return pd.DataFrame({"Id": sample["Id"].to_numpy(), "Predicted": values})
 
 
 def main() -> None:
@@ -36,12 +47,7 @@ def main() -> None:
     prediction = model.predict(X_test)
 
     sample = pd.read_csv(DATA / "example-submission.csv")
-    submission = pd.DataFrame(
-        {
-            "Id": sample["Id"],
-            "Predicted": prediction,
-        }
-    )
+    submission = build_submission(sample, prediction, test_rows=len(X_test))
 
     submit_path = ROOT / config["submit_path"]
     submit_path.parent.mkdir(parents=True, exist_ok=True)

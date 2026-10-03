@@ -1,7 +1,7 @@
 """HDB block-feature CatBoost configuration."""
 
 model_name = "catboost"
-auxiliary_config = None
+auxiliary_config = {"blocks": True}
 
 model_config = {
     "variant": "block",

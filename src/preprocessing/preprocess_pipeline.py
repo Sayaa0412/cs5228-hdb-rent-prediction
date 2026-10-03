@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 from typing import Literal, overload
 
@@ -16,6 +17,24 @@ from src.preprocessing.core import prepare_core
 TARGET_COLUMN = "MONTHLY_RENT"
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 AUXILIARY_DATA = PROJECT_ROOT / "data" / "auxiliary"
+Source = tuple[str, int, int]
+
+
+def _source(name: str) -> Source:
+    path = (AUXILIARY_DATA / name).resolve()
+    stat = path.stat()
+    return str(path), stat.st_mtime_ns, stat.st_size
+
+
+@lru_cache(maxsize=16)
+def _read_auxiliary(source: Source) -> pd.DataFrame:
+    return pd.read_csv(source[0])
+
+
+@lru_cache(maxsize=4)
+def _amenity_lookup(sources: tuple[Source, ...]) -> pd.DataFrame:
+    # File signatures invalidate cached distances when an auxiliary table changes.
+    return make_amenity_features(*(_read_auxiliary(source) for source in sources))
 
 
 @overload
@@ -42,40 +61,44 @@ def preprocess(
     label: bool,
     auxiliary_config: dict | None = None,
 ) -> pd.DataFrame | tuple[pd.DataFrame, pd.Series]:
-    """Build the shared clean feature table used by every model.
+    """Clean rental fields and build the configured auxiliary features.
 
     With ``label=True``, ``MONTHLY_RENT`` is required and returned separately.
     With ``label=False``, only clean features are returned; a target column is
     removed if one is present. The input frame is never mutated.
     """
+    enabled = {"blocks": True, "amenities": True, "coe": True}
     if auxiliary_config is not None:
-        raise NotImplementedError("auxiliary_config is not implemented yet")
+        unknown = set(auxiliary_config).difference(enabled)
+        if unknown:
+            raise ValueError(f"Unknown auxiliary features: {sorted(unknown)}")
+        if any(type(value) is not bool for value in auxiliary_config.values()):
+            raise ValueError("Auxiliary feature switches must be booleans")
+        enabled = {name: auxiliary_config.get(name, False) for name in enabled}
+    if enabled["amenities"] and not enabled["blocks"]:
+        raise ValueError("Amenity features require blocks=True")
+    if label and TARGET_COLUMN not in X_raw.columns:
+        raise ValueError(f"label=True requires the target column {TARGET_COLUMN!r}")
 
     clean = prepare_core(X_raw)
-    blocks = pd.read_csv(AUXILIARY_DATA / "sg-hdb-block.csv")
-    clean = join_block_features(clean, blocks)
+    if enabled["blocks"]:
+        blocks = _read_auxiliary(_source("sg-hdb-block.csv"))
+        clean = join_block_features(clean, blocks)
 
-    amenities = make_amenity_features(
-        blocks,
-        pd.read_csv(AUXILIARY_DATA / "sg-mrt-stations.csv"),
-        pd.read_csv(AUXILIARY_DATA / "sg-schools.csv"),
-        pd.read_csv(AUXILIARY_DATA / "sg-shopping-malls.csv"),
-    )
-    clean = clean.merge(
-        amenities,
-        on=BLOCK_KEYS,
-        how="left",
-        validate="many_to_one",
-    )
+    if enabled["amenities"]:
+        sources = tuple(_source(name) for name in (
+            "sg-hdb-block.csv", "sg-mrt-stations.csv",
+            "sg-schools.csv", "sg-shopping-malls.csv",
+        ))
+        clean = clean.merge(
+            _amenity_lookup(sources), on=BLOCK_KEYS,
+            how="left", validate="many_to_one",
+        )
 
-    coe = pd.read_csv(AUXILIARY_DATA / "sg-coe-prices.csv")
-    clean = add_lagged_coe(clean, coe)
+    if enabled["coe"]:
+        clean = add_lagged_coe(clean, _read_auxiliary(_source("sg-coe-prices.csv")))
 
     if label:
-        if TARGET_COLUMN not in clean.columns:
-            raise ValueError(
-                f"label=True requires the target column {TARGET_COLUMN!r}"
-            )
         y_clean = clean.pop(TARGET_COLUMN)
         return clean, y_clean
 

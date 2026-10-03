@@ -7,29 +7,15 @@ import json
 import runpy
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
+from src.evaluation import HOLDOUT, HORIZON_WINDOWS, ROLLING_WINDOWS, regression_metrics
 from src.models import create_model
 from src.preprocessing import forward_split, preprocess
 
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
-
-HOLDOUT = ("2024-09", "2024-10", "2025-03")
-ROLLING_WINDOWS = [
-    ("2023-03", "2023-04", "2023-09"),
-    ("2023-09", "2023-10", "2024-03"),
-    ("2024-03", "2024-04", "2024-09"),
-    ("2024-09", "2024-10", "2025-03"),
-]
-HORIZON_WINDOWS = [
-    ("2023-09", "2023-10", "2025-03", 18),
-    ("2024-03", "2024-04", "2025-03", 12),
-    ("2024-09", "2024-10", "2025-03", 6),
-]
 
 
 def evaluate_split(
@@ -74,12 +60,7 @@ def evaluate_split(
         "validation_end": valid_end,
         "fit_rows": len(X_train),
         "validation_rows": len(X_valid),
-        "mae_sgd": round(float(mean_absolute_error(y_valid, prediction)), 2),
-        "rmse_sgd": round(
-            float(np.sqrt(mean_squared_error(y_valid, prediction))),
-            2,
-        ),
-        "r2": round(float(r2_score(y_valid, prediction)), 4),
+        **regression_metrics(y_valid, prediction),
     }
 
 
@@ -92,45 +73,32 @@ def main() -> None:
     model_name = config["model_name"]
     raw = pd.read_csv(DATA / "train.csv")
 
-    holdout = evaluate_split(
-        raw,
-        model_name=model_name,
-        model_config=config["model_config"],
-        training_config=config["training_config"],
-        auxiliary_config=config["auxiliary_config"],
-        train_end=HOLDOUT[0],
-        valid_start=HOLDOUT[1],
-        valid_end=HOLDOUT[2],
-    )
+    results = {}
+
+    def evaluate_window(window: tuple[str, str, str]) -> dict:
+        if window not in results:
+            results[window] = evaluate_split(
+                raw,
+                model_name=model_name,
+                model_config=config["model_config"],
+                training_config=config["training_config"],
+                auxiliary_config=config["auxiliary_config"],
+                train_end=window[0], valid_start=window[1], valid_end=window[2],
+            )
+        return dict(results[window])
+
+    holdout = evaluate_window(HOLDOUT)
     print(json.dumps(holdout), flush=True)
 
     rolling = []
     for train_end, valid_start, valid_end in ROLLING_WINDOWS:
-        record = evaluate_split(
-            raw,
-            model_name=model_name,
-            model_config=config["model_config"],
-            training_config=config["training_config"],
-            auxiliary_config=config["auxiliary_config"],
-            train_end=train_end,
-            valid_start=valid_start,
-            valid_end=valid_end,
-        )
+        record = evaluate_window((train_end, valid_start, valid_end))
         rolling.append(record)
         print(json.dumps(record), flush=True)
 
     horizon = []
     for train_end, valid_start, valid_end, months in HORIZON_WINDOWS:
-        record = evaluate_split(
-            raw,
-            model_name=model_name,
-            model_config=config["model_config"],
-            training_config=config["training_config"],
-            auxiliary_config=config["auxiliary_config"],
-            train_end=train_end,
-            valid_start=valid_start,
-            valid_end=valid_end,
-        )
+        record = evaluate_window((train_end, valid_start, valid_end))
         record = {"horizon_months": months, **record}
         horizon.append(record)
         print(json.dumps(record), flush=True)

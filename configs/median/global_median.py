@@ -1,7 +1,7 @@
 """Global median baseline configuration."""
 
 model_name = "median"
-auxiliary_config = None
+auxiliary_config = {}
 
 model_config = {
     "variant": "global_median",
