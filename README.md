@@ -83,6 +83,21 @@ Outputs are ignored by Git:
 
 ## Batch Runs
 
+The original Bash command lists are also available. From the repository root,
+with the intended Python environment active, run them using Bash (Git Bash on
+Windows), or copy an individual command from a script:
+
+```bash
+bash bash/train.bash
+bash bash/eval.bash
+bash bash/analysis.bash
+bash bash/submit.bash
+```
+
+These scripts preserve the original eight configuration commands. A failed
+command does not stop later commands. Add new configuration commands to the lists
+when needed, or use the Python runner below to discover configurations automatically.
+
 The Python runner uses the active interpreter and stops when a task fails. It finds
 configuration files automatically; adding a variant does not require editing a task list.
 
@@ -125,6 +140,7 @@ src/models/               Model interfaces, registry and implementations
 src/preprocessing/        Cleaning, auxiliary joins, caching and time splitting
 src/evaluation/           Shared metrics and validation windows
 scripts/run_all.py        Cross-platform batch runner
+bash/                     Copyable command lists for the original configurations
 tests/                    Synthetic regression checks
 benchmarks/baseline.json   Selected reproducible reference metadata
 docs/TECHNICAL_GUIDE.md    Component contracts and extension examples
