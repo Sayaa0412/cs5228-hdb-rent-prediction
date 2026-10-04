@@ -25,7 +25,7 @@ class ModelIOTests(unittest.TestCase):
             write_auxiliary(folder)
             with patch.object(pipeline, "AUXILIARY_DATA", folder):
                 configs = discover_configs(ROOT)
-                self.assertEqual(len(configs), 9)
+                self.assertEqual(len(configs), 11)
                 for path in configs:
                     with self.subTest(config=path.relative_to(ROOT).as_posix()):
                         config = runpy.run_path(str(path))

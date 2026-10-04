@@ -6,4 +6,6 @@ python train.py --config_path configs/hgb/amenities.py
 python train.py --config_path configs/catboost/block.py
 python train.py --config_path configs/catboost/amenities.py
 python train.py --config_path configs/catboost/lagged_coe.py
+python train.py --config_path configs/catboost/all.py
 python train.py --config_path configs/mlp/block.py
+python train.py --config_path configs/mlp/all.py
