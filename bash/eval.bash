@@ -6,3 +6,4 @@ python eval.py --config_path configs/hgb/amenities.py
 python eval.py --config_path configs/catboost/block.py
 python eval.py --config_path configs/catboost/amenities.py
 python eval.py --config_path configs/catboost/lagged_coe.py
+python eval.py --config_path configs/mlp/block.py

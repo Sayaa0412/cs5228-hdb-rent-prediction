@@ -6,3 +6,4 @@ python submit.py --config_path configs/hgb/amenities.py
 python submit.py --config_path configs/catboost/block.py
 python submit.py --config_path configs/catboost/amenities.py
 python submit.py --config_path configs/catboost/lagged_coe.py
+python submit.py --config_path configs/mlp/block.py

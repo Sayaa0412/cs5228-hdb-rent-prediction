@@ -25,7 +25,7 @@ class ModelIOTests(unittest.TestCase):
             write_auxiliary(folder)
             with patch.object(pipeline, "AUXILIARY_DATA", folder):
                 configs = discover_configs(ROOT)
-                self.assertEqual(len(configs), 8)
+                self.assertEqual(len(configs), 9)
                 for path in configs:
                     with self.subTest(config=path.relative_to(ROOT).as_posix()):
                         config = runpy.run_path(str(path))
@@ -34,6 +34,9 @@ class ModelIOTests(unittest.TestCase):
                             training.update(iterations=5, thread_count=1)
                         elif config["model_name"] == "hgb":
                             training.update(max_iter=5, min_samples_leaf=2)
+                        elif config["model_name"] == "mlp":
+                            training.update(epochs=2, eval_every=1, thread_count=1,
+                                            device="cpu", verbose=False)
                         X, y = preprocess(rental_frame(), label=True, auxiliary_config=config["auxiliary_config"])
                         model = create_model(config["model_name"], model_config=config["model_config"], training_config=training)
                         model.train(X, y)

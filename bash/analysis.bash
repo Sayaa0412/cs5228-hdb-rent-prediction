@@ -6,3 +6,4 @@ python analysis.py --config_path configs/hgb/amenities.py
 python analysis.py --config_path configs/catboost/block.py
 python analysis.py --config_path configs/catboost/amenities.py
 python analysis.py --config_path configs/catboost/lagged_coe.py
+python analysis.py --config_path configs/mlp/block.py

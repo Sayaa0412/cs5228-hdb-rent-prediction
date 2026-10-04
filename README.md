@@ -26,6 +26,22 @@ python -m pip install -r requirements.txt
 
 An existing Conda environment works with the same pip and Python commands.
 If PowerShell activation is unavailable, use `.\.venv\Scripts\python.exe` directly.
+The requirements specify a PyTorch version range without fixing a CUDA build.
+On Windows or Linux, install the appropriate PyTorch build before installing the
+requirements. For CPU-only use:
+
+```bash
+python -m pip install "torch>=2.6,<3" --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r requirements.txt
+```
+
+For NVIDIA GPUs, choose the CUDA build compatible with your driver using the
+[official PyTorch installer](https://pytorch.org/get-started/locally/), then run
+`python -m pip install -r requirements.txt`. For example, the official wheel indexes
+include `https://download.pytorch.org/whl/cu126` and
+`https://download.pytorch.org/whl/cu130`; use the index appropriate for your environment.
+On macOS, use the standard pip installation shown above. An already installed
+PyTorch build satisfying the version range is retained by the requirements command.
 
 ## Local Data
 
