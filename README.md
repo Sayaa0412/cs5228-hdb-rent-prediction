@@ -135,7 +135,7 @@ holdout does not cover the entire test horizon through July 2026.
 ## Repository Structure
 
 ```text
-configs/                  Feature switches, model parameters and output paths
+configs/                  Feature lists, model parameters and output paths
 src/models/               Model interfaces, registry and implementations
 src/preprocessing/        Cleaning, auxiliary joins, caching and time splitting
 src/evaluation/           Shared metrics and validation windows

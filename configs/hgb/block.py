@@ -1,7 +1,15 @@
 """HDB block-feature HGB configuration."""
 
 model_name = "hgb"
-auxiliary_config = {"blocks": True}
+auxiliary_config = {
+    "blocks": [
+        "LATITUDE",
+        "LONGITUDE",
+        "MAX_FLOOR",
+        "BUILDING_AGE",
+        "REGION",
+    ],
+}
 
 model_config = {
     "variant": "block",

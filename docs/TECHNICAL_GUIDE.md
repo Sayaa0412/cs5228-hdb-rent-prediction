@@ -11,7 +11,7 @@ Every `configs/<model>/<variant>.py` supplies:
 | Field | Purpose |
 | --- | --- |
 | `model_name` | Registry name: median, hgb or catboost |
-| `auxiliary_config` | Switches for blocks, amenities and coe |
+| `auxiliary_config` | Requested feature lists grouped by auxiliary source |
 | `model_config` | Variant, feature columns and estimator construction parameters |
 | `training_config` | Fit parameters such as iterations, learning rate and seed |
 | `save_path` | Checkpoint location |
@@ -32,12 +32,18 @@ from src.preprocessing import preprocess
 X_train, y_train = preprocess(
     raw_train,
     label=True,
-    auxiliary_config={"blocks": True, "amenities": True},
+    auxiliary_config={
+        "blocks": ["LATITUDE", "LONGITUDE", "REGION"],
+        "amenities": ["NEAREST_MRT_KM", "MRT_WITHIN_1KM"],
+    },
 )
 X_test = preprocess(
     raw_test,
     label=False,
-    auxiliary_config={"blocks": True, "amenities": True},
+    auxiliary_config={
+        "blocks": ["LATITUDE", "LONGITUDE", "REGION"],
+        "amenities": ["NEAREST_MRT_KM", "MRT_WITHIN_1KM"],
+    },
 )
 ```
 
@@ -46,29 +52,31 @@ the corresponding target separately. `label=False` returns only features, removi
 the target if supplied. Output row order follows the input; joins can reset index labels.
 
 Core processing normalizes address and flat-type strings and constructs approval year,
-month index and lease age. Auxiliary switches select the additional features:
+month index and lease age. Auxiliary lists select the additional features:
 
 | Configuration | Auxiliary files used |
 | --- | --- |
 | `{}` | None |
-| `{"blocks": True}` | HDB blocks |
-| `{"blocks": True, "amenities": True}` | HDB blocks, MRT, schools, malls |
-| `{"blocks": True, "coe": True}` | HDB blocks and COE |
+| `{"blocks": ["LATITUDE"]}` | HDB block table |
+| `{"amenities": ["NEAREST_MRT_KM"]}` | HDB block and MRT tables |
+| `{"coe": ["PREV_MONTH_COE_MEDIAN_SGD"]}` | COE table |
 
-Unspecified switches are false when a dictionary is provided. Unknown switches and
-non-boolean values are rejected. Amenities require `blocks=True`. Omitting the
-configuration or passing `None` retains the original full-feature preprocessing
-behavior for compatibility; maintained experiment files always use explicit switches.
+Unspecified groups add no features when a dictionary is provided. Unknown groups,
+unknown feature names and non-list values are rejected. Amenity calculations load only
+the source tables required by the requested columns; they use block coordinates
+internally without forcing block columns into the model input. Omitting the configuration
+or passing `None` retains the original full-feature behavior for compatibility.
 
 Tables and static amenity features are cached within the process using resolved file
 paths, modification times and sizes. Changes to an auxiliary file invalidate its cache.
 Low-level joins copy their inputs, so callers do not mutate the cached tables.
 COE features use the preceding calendar month; January 2021 has no supplied lagged value.
 
-For a new feature, add a preprocessing component, connect it to `preprocess()`, and
-include its columns in the relevant experiment configuration. Keep all label-dependent
-transformations fitted on the training partition; the existing auxiliary features use
-static tables or earlier calendar months.
+Each auxiliary module owns a feature registry. To extend an existing source, add its
+calculation and registry entry, then request the new column in an experiment config;
+the pipeline dispatch remains unchanged. Keep all label-dependent transformations fitted
+on the training partition; the existing auxiliary features use static tables or earlier
+calendar months.
 
 ## Models
 

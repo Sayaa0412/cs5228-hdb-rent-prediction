@@ -31,27 +31,55 @@ class PreprocessingTests(unittest.TestCase):
         self.assertNotIn("LATITUDE", X)
         self.assertEqual(X.FLAT_TYPE.unique().tolist(), ["3-room", "4-room"])
 
-    def test_blocks_do_not_require_amenity_or_coe_tables(self):
+    def test_blocks_add_only_requested_features(self):
         write_auxiliary(self.folder)
         for name in ("sg-mrt-stations.csv", "sg-schools.csv", "sg-shopping-malls.csv", "sg-coe-prices.csv"):
             (self.folder / name).unlink()
-        X, y = preprocess(self.raw, label=True, auxiliary_config={"blocks": True})
+        X, y = preprocess(
+            self.raw,
+            label=True,
+            auxiliary_config={"blocks": ["LATITUDE"]},
+        )
         self.assertTrue(X.LATITUDE.notna().all())
+        self.assertNotIn("LONGITUDE", X)
+        self.assertNotIn("BUILDING_AGE", X)
         self.assertNotIn("NEAREST_MRT_KM", X)
         self.assertEqual(y.tolist(), self.raw.MONTHLY_RENT.tolist())
 
     def test_coe_uses_previous_month_and_keeps_earliest_month_missing(self):
         write_auxiliary(self.folder)
-        (self.folder / "sg-mrt-stations.csv").unlink()
-        X, _ = preprocess(self.raw, label=True, auxiliary_config={"blocks": True, "coe": True})
+        for name in ("sg-hdb-block.csv", "sg-mrt-stations.csv", "sg-schools.csv", "sg-shopping-malls.csv"):
+            (self.folder / name).unlink()
+        X, _ = preprocess(
+            self.raw,
+            label=True,
+            auxiliary_config={"coe": ["PREV_MONTH_COE_MEDIAN_SGD"]},
+        )
         feature = X.PREV_MONTH_COE_MEDIAN_SGD
         self.assertTrue(feature[X.RENT_APPROVAL_DATE.eq("2021-01")].isna().all())
         self.assertTrue(feature[X.RENT_APPROVAL_DATE.eq("2024-10")].eq(90000).all())
         self.assertNotIn("NEAREST_MRT_KM", X)
 
+    def test_amenities_load_only_sources_needed_by_requested_features(self):
+        write_auxiliary(self.folder)
+        for name in ("sg-mrt-stations.csv", "sg-schools.csv", "sg-coe-prices.csv"):
+            (self.folder / name).unlink()
+        X, _ = preprocess(
+            self.raw,
+            label=True,
+            auxiliary_config={"amenities": ["NEAREST_MALL_KM"]},
+        )
+        self.assertIn("NEAREST_MALL_KM", X)
+        self.assertNotIn("MALLS_WITHIN_1KM", X)
+        self.assertNotIn("LATITUDE", X)
+
     def test_static_amenities_are_cached_and_refresh_after_source_change(self):
         write_auxiliary(self.folder)
-        flags = {"blocks": True, "amenities": True}
+        flags = {"amenities": [
+            "NEAREST_MRT_KM", "MRT_WITHIN_1KM",
+            "NEAREST_PRIMARY_SCHOOL_KM", "PRIMARY_SCHOOLS_WITHIN_1KM",
+            "NEAREST_MALL_KM", "MALLS_WITHIN_1KM",
+        ]}
         with patch.object(pipeline, "make_amenity_features", wraps=pipeline.make_amenity_features) as compute:
             first, _ = preprocess(self.raw, label=True, auxiliary_config=flags)
             preprocess(self.raw, label=True, auxiliary_config=flags)
@@ -63,8 +91,12 @@ class PreprocessingTests(unittest.TestCase):
             self.assertEqual(compute.call_count, 2)
             self.assertGreater(changed.NEAREST_MALL_KM.iloc[0], first.NEAREST_MALL_KM.iloc[0])
 
-    def test_invalid_switches_are_rejected(self):
-        for flags in ({"blocks": "yes"}, {"unknown": True}, {"amenities": True}):
+    def test_invalid_feature_configs_are_rejected(self):
+        for flags in (
+            {"blocks": "LATITUDE"},
+            {"unknown": []},
+            {"amenities": ["UNKNOWN_DISTANCE"]},
+        ):
             with self.subTest(flags=flags), self.assertRaises(ValueError):
                 preprocess(self.raw, label=True, auxiliary_config=flags)
 

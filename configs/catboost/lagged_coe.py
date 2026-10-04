@@ -1,7 +1,16 @@
 """HDB block and lagged-COE CatBoost configuration."""
 
 model_name = "catboost"
-auxiliary_config = {"blocks": True, "coe": True}
+auxiliary_config = {
+    "blocks": [
+        "LATITUDE",
+        "LONGITUDE",
+        "MAX_FLOOR",
+        "BUILDING_AGE",
+        "REGION",
+    ],
+    "coe": ["PREV_MONTH_COE_MEDIAN_SGD"],
+}
 
 model_config = {
     "variant": "lagged_coe",

@@ -1,7 +1,23 @@
 """HDB block and amenity-feature CatBoost configuration."""
 
 model_name = "catboost"
-auxiliary_config = {"blocks": True, "amenities": True}
+auxiliary_config = {
+    "blocks": [
+        "LATITUDE",
+        "LONGITUDE",
+        "MAX_FLOOR",
+        "BUILDING_AGE",
+        "REGION",
+    ],
+    "amenities": [
+        "NEAREST_MRT_KM",
+        "MRT_WITHIN_1KM",
+        "NEAREST_PRIMARY_SCHOOL_KM",
+        "PRIMARY_SCHOOLS_WITHIN_1KM",
+        "NEAREST_MALL_KM",
+        "MALLS_WITHIN_1KM",
+    ],
+}
 
 model_config = {
     "variant": "amenities",
