@@ -1,0 +1,69 @@
+{
+  "geography_only": {
+    "columns": [
+      "MONTH_INDEX",
+      "FLOOR_AREA_SQM",
+      "LEASE_AGE",
+      "LATITUDE",
+      "LONGITUDE",
+      "MAX_FLOOR",
+      "BUILDING_AGE",
+      "TOWN",
+      "FLAT_TYPE",
+      "FLAT_MODEL",
+      "REGION",
+      "STREET",
+      "ADDRESS",
+      "PLANNING_AREA",
+      "SUBZONE"
+    ],
+    "sha256": "a443e5b9da830061be8f209acd540d031ecd4c7a6b1ff3a8cda5e601f456610b"
+  },
+  "geography_census": {
+    "columns": [
+      "MONTH_INDEX",
+      "FLOOR_AREA_SQM",
+      "LEASE_AGE",
+      "LATITUDE",
+      "LONGITUDE",
+      "MAX_FLOOR",
+      "BUILDING_AGE",
+      "TOWN",
+      "FLAT_TYPE",
+      "FLAT_MODEL",
+      "REGION",
+      "STREET",
+      "ADDRESS",
+      "PLANNING_AREA",
+      "SUBZONE",
+      "CENSUS_LOG_RESIDENTS",
+      "CENSUS_HDB_SHARE",
+      "CENSUS_SMALL_WITHIN_HDB",
+      "CENSUS_3ROOM_WITHIN_HDB",
+      "CENSUS_4ROOM_WITHIN_HDB",
+      "CENSUS_5ROOM_WITHIN_HDB",
+      "CENSUS_CONDO_SHARE",
+      "CENSUS_LANDED_SHARE",
+      "CENSUS_OTHER_SHARE",
+      "CENSUS_MISSING"
+    ],
+    "sha256": "98eb4a9945b52a079cae0c5eda47274f871774553c34c836a317e6a82f0ecf52"
+  },
+  "gpu_market_ratio": {
+    "columns": [
+      "FLOOR_AREA_SQM",
+      "LATITUDE",
+      "LONGITUDE",
+      "MAX_FLOOR",
+      "LEASE_START_YEAR",
+      "COMPLETION_YEAR",
+      "TOWN",
+      "FLAT_TYPE",
+      "FLAT_MODEL",
+      "REGION",
+      "STREET",
+      "ADDRESS"
+    ],
+    "sha256": "b85350bad82034f1e0f96129c390e27422a974640d712c89ac389c6e8b446230"
+  }
+}

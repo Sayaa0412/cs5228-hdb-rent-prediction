@@ -1,0 +1,116 @@
+{
+  "scope": "MRT only; historical training period2021-01..2025-03 and origin-known forecast covariates. Exclude incomplete LRT-only rows in supplied MRT table.",
+  "pre2021_rule": "NS integer1..28 except6; EW1..33; CG1,CG2; NE1..17 except2; CC1..29 except18 plus suppliedCC33(MarinaBay),CC34(Bayfront); DT1..35 except4; TE1..3. Original STATUS is not used to infer history.",
+  "pre2021_limit": "Older operational lines require final route-map cross-check before a new training experiment. Supplied station codes include nonstandard CCL branch coding; use names for physical-station deduplication, and do not infer graph edges blindly by code number.",
+  "month_policy": "Station enters on first complete calendar month after actual opening date, because approvals have month precision only. For a held-out forecast origin, use only announcements published by that origin; unknown future openings remain unavailable.",
+  "events": [
+    {
+      "id": "TEL2",
+      "codes": [
+        "te4",
+        "te5",
+        "te6",
+        "te7",
+        "te8",
+        "te9"
+      ],
+      "opened": "2021-08-28",
+      "announced": "2021-08-27",
+      "first_full_month": "2021-09",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2021/8/news-releases/TEL2_to_welcome_commuters_from_28Aug21.html"
+    },
+    {
+      "id": "TEL3",
+      "codes": [
+        "te11",
+        "te12",
+        "te13",
+        "te14",
+        "te15",
+        "te16",
+        "te17",
+        "te18",
+        "te19",
+        "te20",
+        "te22"
+      ],
+      "opened": "2022-11-13",
+      "announced": "2022-10-07",
+      "first_full_month": "2022-12",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2022/10/news-releases/thomson---east-coast-line-stage-3-to-open-for-passenger-service-.html"
+    },
+    {
+      "id": "TEL4",
+      "codes": [
+        "te23",
+        "te24",
+        "te25",
+        "te26",
+        "te27",
+        "te28",
+        "te29"
+      ],
+      "opened": "2024-06-23",
+      "announced": "2024-03-05",
+      "first_full_month": "2024-07",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2024/3/news-releases/TEL4_to_welcome_commuters.html"
+    },
+    {
+      "id": "PunggolCoast",
+      "codes": [
+        "ne18"
+      ],
+      "opened": "2024-12-10",
+      "announced": "2024-10-10",
+      "first_full_month": "2025-01",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2024/10/news-releases/punggol_coast_station_to_open_for_passenger_service.html"
+    },
+    {
+      "id": "Hume",
+      "codes": [
+        "dt4"
+      ],
+      "opened": "2025-02-28",
+      "announced": "2025-01-24",
+      "first_full_month": "2025-03",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2025/1/news-releases/hume_station_to_open.html"
+    }
+  ],
+  "future_exclusions": [
+    {
+      "codes": "CR*,CP*",
+      "reason": "CrossIslandLine not operating in2021-2025; primary dated2025 release gives progressive opening from2030.",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2025/3/news-releases/expanding_our_rail_network_and_strengthening_rail_reliability.html"
+    },
+    {
+      "codes": "JS*,JE*,JW*",
+      "reason": "JurongRegionLine not operating in2021-2025; dated2025 release places stages in2027-2029. Later2026delay not used to set historical predictions.",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2025/3/news-releases/expanding_our_rail_network_and_strengthening_rail_reliability.html"
+    },
+    {
+      "codes": "CC30,CC31,CC32,DT36,DT37,TE30,TE31",
+      "reason": "CCL6/TEL5/DTLextension were future projects throughout historical training period.",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2025/3/news-releases/expanding_our_rail_network_and_strengthening_rail_reliability.html"
+    },
+    {
+      "codes": "NS3A",
+      "reason": "Brickland targeted2034, not operating in historical data.",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/newsroom/2023/7/news-releases/new-brickland-station-to-enhance-rail-connectivity-in-western-si.html"
+    },
+    {
+      "codes": "TE10,TE21,TE22A,TE32",
+      "reason": "MountPleasant,MarinaSouth,FoundersMemorial andChangiTerminal5 are not operational parts of TEL1-4 in2021-2025.",
+      "source": "https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/rail_expansion/thomson_east_coast_line.html"
+    },
+    {
+      "codes": "NS6,DE1,DE2,RTS",
+      "reason": "Future/incomplete-network candidates, excluded from MRT2021-2025 whitelist; final map cross-check pending.",
+      "source": "pending supplementary official route verification"
+    },
+    {
+      "codes": "BP*,PE*,PTC,STC",
+      "reason": "LRT-only records, not a complete LRT station inventory. Existing MRT aliases at shared stations remain if separately active.",
+      "source": "provided CODE/NAME inventory"
+    }
+  ]
+}

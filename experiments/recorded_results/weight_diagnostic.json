@@ -1,0 +1,8 @@
+{
+  "retrospective_oracle_market_weight": 0.4242287306081333,
+  "retrospective_oracle_rmse": 514.9852728242385,
+  "fixed_average_rmse": 515.1382649503729,
+  "optimistic_scalar_weight_gain": 0.1529921261344498,
+  "warning": "Uses exposed evaluation labels; this is only an optimistic diagnostic, not a selected/deployable weight or validation gain.",
+  "decision": "Do not initiate another scalar-weight search on a sub-dollar pooled oracle signal. Preserve fixed0.5and existing predictions."
+}

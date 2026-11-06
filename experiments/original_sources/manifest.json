@@ -1,0 +1,54 @@
+{
+  "course_classical_comparison.py": {
+    "source": "work/course_classical_comparison.py",
+    "sha256": "5dc804d6a50640a2331641850d8e14cfcc9611bafe9b9289bb564e6064057775"
+  },
+  "census_gpu_experiment.py": {
+    "source": "work/census_gpu_experiment.py",
+    "sha256": "c2ff31d676f573f48e4ab14e7a6905481132a5894d45a1b7613ef82d93d74cd8"
+  },
+  "course_gpu_common.py": {
+    "source": "work/course_gpu_common.py",
+    "sha256": "0a06a3385430bb5c75debfe8e87a61616dc241850184bfc78568949d1265527b"
+  },
+  "renewal_gpu.py": {
+    "source": "work/renewal_gpu.py",
+    "sha256": "ea5a0fa9fca3b46e900310e81f70daca2d8d8bdbd8363259d45dede2a62c9057"
+  },
+  "renewal_features.py": {
+    "source": "work/renewal_features.py",
+    "sha256": "b0b74d5aa03725de10f0bda4f326d1c4d10293d00ed6b89b12af6d73ff0a2cda"
+  },
+  "renewal_ablation_gpu.py": {
+    "source": "work/renewal_ablation_gpu.py",
+    "sha256": "599a255ea47632d3283f1e5f75697e0bca2fcb85f51779bd5383bbd88228796a"
+  },
+  "renewal_market_gpu.py": {
+    "source": "work/renewal_market_gpu.py",
+    "sha256": "bf8be190608d5e6a15a29f1f6fb276d4eeb4960a6e3d3cd29f320ac36b8b1415"
+  },
+  "seasonal_difference_gpu.py": {
+    "source": "work/seasonal_difference_gpu.py",
+    "sha256": "83fdc299e96250af09fba96c1c0d458cff6676aa0cb5bd4d75c8244f3c53cc0f"
+  },
+  "calendar_linear.py": {
+    "source": "work/calendar_linear.py",
+    "sha256": "4c37b6541f2a197e4d166ab32a48737e6348a8922df34894d8445499960589e8"
+  },
+  "analyze_calendar_linear.py": {
+    "source": "work/analyze_calendar_linear.py",
+    "sha256": "acd1a368e89d57620f7b6a179f781936608292f064d35cabdcc6fea244a2fc64"
+  },
+  "interpret_calendar_linear.py": {
+    "source": "work/interpret_calendar_linear.py",
+    "sha256": "6d3748a4bc5ce18e1f47f5b92f68b333b20e8277106a8e7e8099b56a7ad85741"
+  },
+  "prepare_census_features.py": {
+    "source": "work/prepare_census_features.py",
+    "sha256": "59eaf1c2c8648a047e09c68c7a1d197e56a6e8bcf5988c5e061010fb9d45e06c"
+  },
+  "renewal_effect_detail.py": {
+    "source": "work/renewal_effect_detail.py",
+    "sha256": "5655d36344640030ff7c54ed085de5aac24c068b839c7492ee5338f6fc8b91c8"
+  }
+}

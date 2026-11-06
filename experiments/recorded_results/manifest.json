@@ -1,0 +1,50 @@
+{
+  "classical.csv": {
+    "source": "outputs/course_classical_diagnostics_20261031/metrics.csv",
+    "sha256": "e5366ad3e4c81409cb0cb83d9212792f77be9049c4a435a8ac5552d5107c3b07"
+  },
+  "census.csv": {
+    "source": "outputs/census_gpu_diagnostics_20261031/metrics.csv",
+    "sha256": "770e0bbbfc3a2bcb58c1d04942c2fbdcd0d10285069fc1c9c73a67f0849fb476"
+  },
+  "lags_C29.csv": {
+    "source": "outputs/renewal_gpu_20261031_run01/metrics.csv",
+    "sha256": "5ab68e9a20850312be65ef76166348e6d23f0759a8a8ff257cdc2cd9d9ae103b"
+  },
+  "single_lags_C30.csv": {
+    "source": "outputs/renewal_ablation_gpu_20261031_run01/metrics.csv",
+    "sha256": "c752e49e3a9b8b42a0d76c988289d277285ca731740e005c407540ed408f0554"
+  },
+  "market_history_C31.csv": {
+    "source": "outputs/renewal_market_gpu_20261031_run01/metrics.csv",
+    "sha256": "bd99af25526364b0291d1257d1dfcf0f14f42950e6b694c65487c1be66e9c5c4"
+  },
+  "normalized_history_C32.csv": {
+    "source": "outputs/seasonal_difference_gpu_20261031_run01/metrics.csv",
+    "sha256": "d60bd76da9ec5a3bb2b094cba5ade1ce228d94995d5775e85ede74d2461721e0"
+  },
+  "final_C33.csv": {
+    "source": "outputs/calendar_linear_20261031_run01/metrics.csv",
+    "sha256": "270806e0134e19dcbec16221dbe88cb5dfed29c32457a348f6e2b810bed9871b"
+  },
+  "final_C33_bands.csv": {
+    "source": "outputs/calendar_linear_20261031_run01/bands.csv",
+    "sha256": "2d3b4aca2dfcba7748f41f0ffab739b08bca7bbeb3b7ea504948dc4b0241ee8e"
+  },
+  "error_decomposition.csv": {
+    "source": "outputs/calendar_linear_diagnostics_20261031/error_decomposition.csv",
+    "sha256": "308601b4013d811e6564008a19845c2cebd2bdf9b936851afdf06b2bdf963d65"
+  },
+  "error_slices.csv": {
+    "source": "outputs/calendar_linear_diagnostics_20261031/slices.csv",
+    "sha256": "845a3aa335ae1cd9725b422a0ddd15767319a5f85ae43ee6ea23373275fb8b3c"
+  },
+  "coefficients.csv": {
+    "source": "outputs/calendar_linear_interpretation_20261031/coefficients.csv",
+    "sha256": "2f335b6de818e9520eda329e551f8f4f23bde2396497e63931e45b10518ca528"
+  },
+  "weight_diagnostic.json": {
+    "source": "outputs/calendar_linear_interpretation_20261031/weight_diagnostic.json",
+    "sha256": "d339d5910c606e7b768c097b7c87ef847640d8387b56d1f1d6c99674bda18514"
+  }
+}

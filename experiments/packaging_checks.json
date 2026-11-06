@@ -1,0 +1,14 @@
+{
+  "rows": 150000,
+  "syntax_files": 21,
+  "base_features_equal": true,
+  "census_features_equal": true,
+  "history_checks": 20,
+  "new_training": false,
+  "normalized_history_checks": 4,
+  "diagnostic_metric_rows_compared": 25,
+  "error_decomposition_rows_compared": 4,
+  "command_help": true,
+  "new_inference": false,
+  "full_training_validation": false
+}

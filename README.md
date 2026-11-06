@@ -277,3 +277,7 @@ Before opening a pull request:
 5. Rebase on the latest `main`, resolve conflicts locally and push the feature branch.
 
 The repository ignores `data/`, `chkpt/`, `output/`, virtual environments and editor-local settings. Do not force-add these generated or machine-specific files. Use a pull request when changes overlap with another contributor's work or affect shared model and preprocessing interfaces.
+
+## Final-report experiment records
+
+See [experiments/README.md](experiments/README.md) for the principal comparison scripts, saved aggregate results, and complete experiment ledger. No course rental data or model checkpoints are included.

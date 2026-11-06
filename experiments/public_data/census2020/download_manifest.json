@@ -1,0 +1,13 @@
+{
+  "downloaded": "2026-10-31T03:56:31.008820+00:00",
+  "url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_7f243956483d5901f237e6f87b096636&limit=1000",
+  "source_page": "https://data.gov.sg/datasets/d_7f243956483d5901f237e6f87b096636/view",
+  "bytes": 117860,
+  "sha256": "71c2aadbfb7f27252590d1bcafe5a60ea5d8432b4e3c7fbd680862a326aa585b",
+  "rows": 388,
+  "survey_year": 2020,
+  "official_statistical_release": "2021-06-18",
+  "release_evidence": "https://www.singstat.gov.sg/-/media/files/publications/cop2020/admin/cop2020admin.pdf",
+  "portal_created": "2024-10-22",
+  "note": "Portal creation differs from original statistical release. Counts describe residents, not dwelling units or tenancy. Use provided planning-area/subzone keys; no personal microdata."
+}

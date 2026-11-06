@@ -1,0 +1,5 @@
+# Preserve original bytes for archived SHA-256 manifests, including CRLF.
+original_sources/** -text
+recorded_results/** -text
+records/** -text
+public_data/** -text
