@@ -6,6 +6,18 @@ Models, feature processing and forward validation for monthly HDB rent predictio
 This repository tracks code, experiment configurations, tests and selected baseline
 metadata. Course data, presentations, prediction CSVs and trained checkpoints stay local.
 
+## Final report model
+
+The final model combines a CatBoost reference with exact 12/24-month rental histories
+and a market-normalized Ridge component, using a fixed 50/50 average. Its recorded
+four-window pooled RMSE is **515.14 SGD**; latest-window RMSE is **435.37 SGD**.
+These are development results, not Kaggle test scores.
+
+Use **[the final-model guide](docs/final_model.md)** for the three commands in
+`final.py`: `train`, `evaluate`, and `predict`. It reads the original CSVs directly;
+no research workspace, cached predictions, or separately downloaded data are needed.
+The earlier baseline commands below remain available.
+
 ## Setup
 
 Use Python 3.11 or newer. From the repository root, create a virtual environment:
